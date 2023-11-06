@@ -1,0 +1,149 @@
+{% extends "../base.html" %} {% load static %} {% block title %}
+<div class="mx-auto max-w-7xl px-2 py-4 sm:px-6 lg:px-8 flex justify-between">
+  <h1 class="text-3xl font-bold tracking-tight dark:text-white">통계(Chart)</h1>
+  <p class="flex flex-row space-x-4 justify-end order-last items-center">
+    <label class="text-center dark:text-white" for="formdate">Date:</label>
+    <input
+      class="bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-40 pl-5 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      autocomplete="off"
+      type="text"
+      id="datepicker"
+      name="formdate"
+      placeholder="Select date"
+    />
+    {% csrf_token %}
+    <button
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      type="button"
+      id="btn_search"
+    >
+      검색
+    </button>
+    <button
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      type="button"
+      id="btn_all"
+    >
+      전체
+    </button>
+  </p>
+</div>
+{% endblock title %} {% block content %}
+<main>
+  <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+    <div>
+      <canvas id="myChart" class="max-h-96"></canvas>
+    </div>
+    <div id="chart-table"></div>
+  </div>
+</main>
+<form id="searchForm" method="get" action="{% url 'ems:statistics' %}">
+  <input type="hidden" id="kw" name="kw" value="{{ kw }}" />
+</form>
+
+<script>
+  $(function () {
+    $("#datepicker").datepicker({ dateFormat: "yy-mm-dd " });
+  });
+</script>
+
+<script type="text/javascript">
+  const tag = document.getElementById("chart");
+  tag.className =
+    "bg-gray-300 dark:bg-gray-900 dark:text-white rounded-md px-3 py-2 text-sm font-medium";
+
+  $(document).ready(function () {
+    var page = "1";
+    var date = $("#datepicker").val();
+    updateTable(page, date);
+    function updateTable(page, date) {
+      $.ajax({
+        url: '{% url "ems:ajax_update_table_chart" %}',
+        type: "GET",
+        data: {
+          page: page,
+          date: date,
+        },
+        success: function (data) {
+          $("#chart-table").html(data.html_data);
+        },
+      });
+    }
+
+    $("#btn_search").click(function () {
+      var page = "1";
+      var date = $("#datepicker").val();
+      updateTable(page, date);
+    });
+
+    $("#btn_all").click(function () {
+      var page = "1";
+      var date = "";
+      updateTable(page, date);
+    });
+
+    $(document).on("click", ".page-link", function () {
+      var page = $(this).data("page");
+      var date = $("#datepicker").val();
+      updateTable(page, date);
+    });
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  var myChart;
+  function createChart(labels, data) {
+    var ctx = document.getElementById("myChart").getContext("2d");
+    var myChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: "데이터 합계",
+            data: data,
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+      },
+    });
+    return myChart;
+  }
+
+  $.get('{% url "ems:chart_data" %}', function (data) {
+    myChart = createChart(data.labels, data.data);
+    $("#btn_search").click(function () {
+      var selectedDate = $("#datepicker").val();
+      $.get(
+        `{% url "ems:chart_data" %}`,
+        { date: selectedDate },
+        function (newData) {
+          myChart.data.labels = newData.labels;
+          myChart.data.datasets[0].data = newData.data;
+          myChart.update();
+        }
+      );
+    });
+
+    $("#btn_all").click(function () {
+      var selectedDate = "";
+      $.get(
+        `{% url "ems:chart_data" %}`,
+        { date: selectedDate },
+        function (newData) {
+          myChart.data.labels = newData.labels;
+          myChart.data.datasets[0].data = newData.data;
+          myChart.update();
+        }
+      );
+    });
+  });
+</script>
+{% endblock content %}

@@ -1,0 +1,220 @@
+<div class="py-1 items-center flex flex-row justify-between">
+  <div>
+    <p class="inline-block text-xl font-bold tracking-tight text-gray-900"> PCS </p>
+  </div>
+  <div class="items-center flex flex-row space-x-4 order-last" >
+    <p class="text-sm font-bold tracking-tight text-gray-400"> {{ ems_list.start_index }}-{{ ems_list.end_index }} / {{ ems_list.paginator.count }}개의 데이터 </p>
+    <button class="inline-block bg-blue-500 text-sm hover:bg-blue-700 text-white font-bold py-1 px-2 rounded" type="button" id="btn_download">
+      CSV File Download
+    </button>
+  </div>
+</div>
+<div class="flex flex-col">
+    <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+        <div class="overflow-hidden">
+          <table class="text-center min-w-full text-sm font-light">
+            <thead class="border-b font-medium border-neutral-500">
+              <tr>
+                <th scope="col" class="px-3 py-2">Voltage (R)</th>
+                <th scope="col" class="px-3 py-2">Voltage (S)</th>
+                <th scope="col" class="px-3 py-2">Voltage (T)</th>
+                <th scope="col" class="px-3 py-2">Current (R)</th>
+                <th scope="col" class="px-3 py-2">Current (S)</th>
+                <th scope="col" class="px-3 py-2">Current (T)</th>
+                <th scope="col" class="px-3 py-2">ActivePower</th>
+                <th scope="col" class="px-3 py-2">Frequency</th>
+                <th scope="col" class="px-3 py-2">누적전력량</th>
+                <th scope="col" class="px-3 py-2">저장날짜</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for data in ems_list %}
+                <tr class="border-b border-gray-300 relative rounded transition-all bg-transparent hover:bg-neutral-700 hover:text-white">
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.voltage_R }}V</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.voltage_S }}V</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.voltage_T }}V</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.current_R }}A</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.current_S }}A</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.current_T }}A</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.active_power }}kW</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.frequency }}Hz</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.accumulate_energy }}kWh</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.save_date|date:"Y-m-d H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-1">
+    <p class="text-xl font-bold tracking-tight text-gray-900"> Battery </p>
+  </div>
+  <div class="flex flex-col">
+    <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+        <div class="overflow-hidden">
+          <table class="text-center min-w-full text-sm font-light">
+            <thead class="border-b font-medium border-neutral-500">
+              <tr>
+                <th scope="col" class="px-3 py-2">DC Voltage (R)</th>
+                <th scope="col" class="px-3 py-2">DC Voltage (S)</th>
+                <th scope="col" class="px-3 py-2">DC Voltage (T)</th>
+                <th scope="col" class="px-3 py-2">DC Current (R)</th>
+                <th scope="col" class="px-3 py-2">DC Current (S)</th>
+                <th scope="col" class="px-3 py-2">DC Current (T)</th>
+                <th scope="col" class="px-3 py-2">ActivePower</th>
+                <th scope="col" class="px-3 py-2">SOC</th>
+                <th scope="col" class="px-3 py-2">SOH</th>
+                <th scope="col" class="px-3 py-2">저장날짜</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for data in battery_list %}
+                <tr class="border-b border-gray-300 relative rounded transition-all bg-transparent hover:bg-neutral-700 hover:text-white">
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.DCvoltage_R }}V</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.DCvoltage_S }}V</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.DCvoltage_T }}V</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.DCcurrent_R }}A</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.DCcurrent_S }}A</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.DCcurrent_T }}A</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.active_power }}kW</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.SOC }}%</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.SOH }}%</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.save_date|date:"Y-m-d H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-1">
+    <p class="text-xl font-bold tracking-tight text-gray-900"> PV </p>
+  </div>
+  <div class="flex flex-col">
+    <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+        <div class="overflow-hidden">
+          <table class="text-center min-w-full text-sm font-light">
+            <thead class="border-b font-medium border-neutral-500">
+              <tr>
+                <th scope="col" class="px-3 py-2">ActivePower</th>
+                <th scope="col" class="px-3 py-2">저장날짜</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for data in pv_list %}
+                <tr class="border-b border-gray-300 relative rounded transition-all bg-transparent hover:bg-neutral-700 hover:text-white">
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.active_power }}kW</td>
+                    <td class="whitespace-nowrap px-3 py-2">{{ data.save_date|date:"Y-m-d H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- 페이징처리 시작 -->
+<ul class="list-style-none flex">
+    <!--처음페이지-->
+    {% if ems_list.has_previous %}
+    <li>
+        <a class="page-link relative block rounded bg-transparent px-3 py-1.5 text-sm text-neutral-600 transition-all duration-300 hover:bg-neutral-100 dark:text-black dark:hover:bg-neutral-700 dark:hover:text-white" 
+        data-page="1" href="javascript:void(0)">처음</a>
+    </li>
+    {% else %}
+    <li class="pointer-events-none">
+        <a class="page-link relative block rounded bg-transparent px-3 py-1.5 text-sm text-neutral-400 transition-all duration-300 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-white disabled"
+         tabindex="-1" aria-disabled="true" href="#">처음</a>
+    </li>
+    {% endif %}
+    <!--10페이지이전-->
+    {% if ems_list.number > 10 %}
+    <li>
+        <a class="page-link relative block rounded bg-transparent px-3 py-1.5 text-sm text-neutral-600 transition-all duration-300 hover:bg-neutral-100 dark:text-black dark:hover:bg-neutral-700 dark:hover:text-white" 
+        data-page="{{ ems_list.number|add:"-10" }}" href="javascript:void(0)">10페이지 전</a>
+    </li>
+    {% else %}
+    <li class="pointer-events-none">
+        <a class="page-link relative block rounded bg-transparent px-3 py-1.5 text-sm text-neutral-400 transition-all duration-300 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-white disabled"
+         tabindex="-1" aria-disabled="true" href="#">10페이지 전</a>
+    </li>
+    {% endif %}
+    <!-- 이전페이지 -->
+    {% if ems_list.has_previous %}
+    <li>
+        <a class="page-link relative block rounded bg-transparent px-3 py-1.5 text-sm text-neutral-600 transition-all duration-300 hover:bg-neutral-100 dark:text-black dark:hover:bg-neutral-700 dark:hover:text-white" 
+        data-page="{{ ems_list.previous_page_number }}" href="javascript:void(0)">이전</a>
+    </li>
+    {% else %}
+    <li class="pointer-events-none">
+        <a class="page-link relative block rounded bg-transparent px-3 py-1.5 text-sm text-neutral-400 transition-all duration-300 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-white disabled"
+         tabindex="-1" aria-disabled="true" href="#">이전</a>
+    </li>
+    {% endif %}
+    <!-- 페이지리스트 -->
+    {% for page_number in ems_list.paginator.page_range %}
+    {% if page_number >= ems_list.number|add:-4 and page_number <= ems_list.number|add:4 %}
+    {% if page_number == ems_list.number %}
+    <li aria-current="page">
+        <a class="page-link relative block rounded bg-neutral-800 px-3 py-1.5 text-sm font-medium text-neutral-50 transition-all duration-300 dark:bg-neutral-900"
+        data-page="{{ page_number }}"
+        href="javascript:void(0)">{{ page_number }}</a>
+    </li>
+    {% else %}
+    <li>
+        <a class="page-link relative block rounded bg-transparent px-3 py-1.5 text-sm text-neutral-600 transition-all duration-300 hover:bg-neutral-100 dark:text-black dark:hover:bg-neutral-700 dark:hover:text-white" 
+        data-page="{{ page_number }}"
+        href="javascript:void(0)">{{ page_number }}</a>
+    </li>
+    {% endif %}
+    {% endif %}
+    {% endfor %}
+    <!-- 다음페이지 -->
+    {% if ems_list.has_next %}
+    <li>
+        <a class="page-link relative block rounded bg-transparent px-3 py-1.5 text-sm text-neutral-600 transition-all duration-300 hover:bg-neutral-100 dark:text-black dark:hover:bg-neutral-700 dark:hover:text-white" 
+        data-page="{{ ems_list.next_page_number }}"
+        href="javascript:void(0)">다음</a>
+    </li>
+    {% else %}
+    <li class="pointer-events-none">
+        <a class="page-link relative block rounded bg-transparent px-3 py-1.5 text-sm text-neutral-400 transition-all duration-300 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-white" 
+        tabindex="-1" aria-disabled="true" href="#">다음</a>
+    </li>
+    {% endif %}
+    <!--10페이지다음-->
+    {% if ems_list.number|add:10 <= ems_list.paginator.num_pages %}
+    <li>
+        <a class="page-link relative block rounded bg-transparent px-3 py-1.5 text-sm text-neutral-600 transition-all duration-300 hover:bg-neutral-100 dark:text-black dark:hover:bg-neutral-700 dark:hover:text-white" 
+        data-page="{{ ems_list.number|add:10 }}" href="javascript:void(0)">10페이지 후</a>
+    </li>
+    {% else %}
+    <li class="pointer-events-none">
+        <a class="page-link relative block rounded bg-transparent px-3 py-1.5 text-sm text-neutral-400 transition-all duration-300 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-white disabled"
+         tabindex="-1" aria-disabled="true" href="#">10페이지 후</a>
+    </li>
+    {% endif %}
+    <!-- 끝페이지 -->
+    {% if ems_list.has_next %}
+    <li>
+        <a class="page-link relative block rounded bg-transparent px-3 py-1.5 text-sm text-neutral-600 transition-all duration-300 hover:bg-neutral-100 dark:text-black dark:hover:bg-neutral-700 dark:hover:text-white" 
+        data-page="{{ ems_list.paginator.num_pages }}"
+        href="javascript:void(0)">끝</a>
+    </li>
+    {% else %}
+    <li class="pointer-events-none">
+        <a class="page-link relative block rounded bg-transparent px-3 py-1.5 text-sm text-neutral-400 transition-all duration-300 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-white" 
+        tabindex="-1" aria-disabled="true" href="#">끝</a>
+    </li>
+    {% endif %}
+    <li>
+      <p class="px-3 py-1.5 font-bold text-sm text-gray-400">page {{ ems_list.number }}/{{ems_list.paginator.num_pages}}</p>
+    </li>
+</ul>
+<!-- 페이징처리 끝 -->

@@ -1,0 +1,150 @@
+{% extends "../base.html" %} {% load static %} {% block title %}
+<div class="mx-auto max-w-7xl px-2 py-4 sm:px-6 lg:px-8 flex justify-between">
+  <h1 class="text-3xl font-bold tracking-tight dark:text-white">
+    실시간(Redis)
+  </h1>
+  <p class="flex flex-row space-x-4 justify-end order-last items-center">
+    <button
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      type="button"
+      id="btn_alarm"
+    >
+      알림 보내기
+    </button>
+  </p>
+</div>
+{% endblock title %} {% block content %}
+<main>
+  <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+    <div>
+      <p class="text-3xl font-bold tracking-tight text-gray-900">PCS</p>
+    </div>
+    <div class="flex flex-col">
+      <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+          <div class="overflow-hidden">
+            <table class="text-center min-w-full text-sm font-light">
+              <thead class="border-b font-medium border-neutral-500">
+                <tr>
+                  <th scope="col" class="px-6 py-4">Voltage (R)</th>
+                  <th scope="col" class="px-6 py-4">Voltage (S)</th>
+                  <th scope="col" class="px-6 py-4">Voltage (T)</th>
+                  <th scope="col" class="px-6 py-4">Current (R)</th>
+                  <th scope="col" class="px-6 py-4">Current (S)</th>
+                  <th scope="col" class="px-6 py-4">Current (T)</th>
+                  <th scope="col" class="px-6 py-4">ActivePower</th>
+                  <th scope="col" class="px-6 py-4">Frequency</th>
+                  <th scope="col" class="px-6 py-4">AccumulateEnergy</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="dark:border-neutral-500" id="pcs_data">
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="py-2">
+      <p class="text-3xl font-bold tracking-tight text-gray-900">Battery</p>
+    </div>
+    <div class="flex flex-col">
+      <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+          <div class="overflow-hidden">
+            <table class="text-center min-w-full text-sm font-light">
+              <thead class="border-b font-medium border-neutral-500">
+                <tr>
+                  <th scope="col" class="px-6 py-4">DC Voltage (R)</th>
+                  <th scope="col" class="px-6 py-4">DC Voltage (S)</th>
+                  <th scope="col" class="px-6 py-4">DC Voltage (T)</th>
+                  <th scope="col" class="px-6 py-4">DC Current (R)</th>
+                  <th scope="col" class="px-6 py-4">DC Current (S)</th>
+                  <th scope="col" class="px-6 py-4">DC Current (T)</th>
+                  <th scope="col" class="px-6 py-4">ActivePower</th>
+                  <th scope="col" class="px-6 py-4">SOC</th>
+                  <th scope="col" class="px-6 py-4">SOH</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="dark:border-neutral-500" id="battery_data">
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="py-2">
+      <p class="text-3xl font-bold tracking-tight text-gray-900">PV</p>
+    </div>
+    <div class="flex flex-col">
+      <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+          <div class="overflow-hidden">
+            <table class="min-w-full text-center text-sm font-light">
+              <thead
+                class="text-center border-b font-medium border-neutral-500"
+              >
+                <tr>
+                  <th scope="col" class="px-6 py-4">ActivePower</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="dark:border-neutral-500" id="pv_data">
+                  <td class="whitespace-nowrap px-6 py-2">0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<script src="{% static 'js/realtime_main.js' %}"></script>
+<script>
+  const tag = document.getElementById("redis");
+  tag.className =
+    "bg-gray-300 dark:bg-gray-900 dark:text-white rounded-md px-3 py-2 text-sm font-medium";
+  
+    $(document).ready(function () {
+      function request_alarm(username, phone) {
+        $.ajax({
+          url: '{% url "ems:request_alarm" %}',
+          type: "GET",
+          data: {
+            username: username,
+            phone: phone,
+          },
+          success: function (data) {
+          },
+        });
+      }
+      $("#btn_alarm").click(function () {
+        var username = '{{ user.username }}'
+        var phone = '{{ user.phone }}'
+        request_alarm(username, phone)
+      });
+    });
+</script>
+{% endblock content %}

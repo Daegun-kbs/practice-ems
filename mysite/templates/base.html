@@ -1,0 +1,127 @@
+<!-- templates/_base.html -->
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en" class="{% if request.COOKIES.dark_mode %}dark{% endif %} h-full bg-white dark:bg-gray-100">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django EMS</title>
+    {% tailwind_css %}
+    {% block head %}
+    {% endblock head %}
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src={% static 'jquery/external/jquery/jquery.js'%}></script>
+    <script src={% static 'jquery/jquery-ui.js' %}></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+</head>
+<body class="h-full">
+    <div class="min-h-full">
+        <nav class="bg-white dark:bg-gray-800 sticky top-0 border-b border-gray-600">
+          <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" width="25px" height="25px" viewBox="0 0 54 33">
+                      <g clip-path="url(#prefix__clip0)">
+                        <path fill="#38bdf8" fill-rule="evenodd" d="M27 0c-7.2 0-11.7 3.6-13.5 10.8 2.7-3.6 5.85-4.95 9.45-4.05 2.054.513 3.522 2.004 5.147 3.653C30.744 13.09 33.808 16.2 40.5 16.2c7.2 0 11.7-3.6 13.5-10.8-2.7 3.6-5.85 4.95-9.45 4.05-2.054-.513-3.522-2.004-5.147-3.653C36.756 3.11 33.692 0 27 0zM13.5 16.2C6.3 16.2 1.8 19.8 0 27c2.7-3.6 5.85-4.95 9.45-4.05 2.054.514 3.522 2.004 5.147 3.653C17.244 29.29 20.308 32.4 27 32.4c7.2 0 11.7-3.6 13.5-10.8-2.7 3.6-5.85 4.95-9.45 4.05-2.054-.513-3.522-2.004-5.147-3.653C23.256 19.31 20.192 16.2 13.5 16.2z" clip-rule="evenodd"/>
+                      </g>
+                      <defs>
+                        <clipPath id="prefix__clip0"><path fill="#fff" d="M0 0h54v32.4H0z"/></clipPath>
+                      </defs>
+                    </svg>
+                </div>
+                <div class="hidden md:block">
+                  <div class="ml-8 flex items-baseline justify-between space-x-2">
+                    <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+                    <a href="{% url 'ems:main' %}" class="hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white rounded-md px-3 py-2 text-sm font-medium" id="main">메인(Total)</a>
+                    <a href="{% url 'ems:redis' %}" class="hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white rounded-md px-3 py-2 text-sm font-medium" id="redis">실시간(Redis)</a>
+                    <a href="{% url 'ems:influx' %}" class="hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white rounded-md px-3 py-2 text-sm font-medium" id="influx">초단위(Influx)</a>
+                    <a href="{% url 'ems:maria' %}" class="hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white rounded-md px-3 py-2 text-sm font-medium" id="maria">분단위(Maria)</a>
+                    <a href="{% url 'ems:statistics' %}" class="hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white rounded-md px-3 py-2 text-sm font-medium" id="chart">통계(Chart)</a>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-baseline space-x-2 order-last justify-between">
+                <a href="{% url 'change-theme' %}" class="bg-white border border-black dark:border-white text-black dark:bg-gray-900 dark:text-white rounded-md px-3 py-2 text-sm font-medium">
+                  {% if request.COOKIES.dark_mode %}
+                    <label>Dark</label>
+                    <i class="fa fa-moon-o" aria-hidden="true"></i>
+                  {% else %}
+                    <label>Light</label>
+                    <i class="fa fa-sun-o"></i>
+                  {% endif %}
+                </a>
+                <p id="server-time" class="w-60 bg-white border border-black text-gray-900 rounded-md px-3 py-2 text-sm font-medium">Server Time: <span id="time-display"></span></p>
+                <p id="server-weather" class="bg-white border border-black text-gray-900 rounded-md px-3 py-2 text-sm font-medium flex flex-row items-center">
+                  <label>Weather: </label><span class="ml-1" id="weather-display"></span><label>&deg;C</label>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 36 36" class="ml-1.5 hidden" id="sun">
+                    <path fill="#FFAC33" d="M16 2s0-2 2-2s2 2 2 2v2s0 2-2 2s-2-2-2-2V2zm18 14s2 0 2 2s-2 2-2 2h-2s-2 0-2-2s2-2 2-2h2zM4 16s2 0 2 2s-2 2-2 2H2s-2 0-2-2s2-2 2-2h2zm5.121-8.707s1.414 1.414 0 2.828s-2.828 0-2.828 0L4.878 8.708s-1.414-1.414 0-2.829c1.415-1.414 2.829 0 2.829 0l1.414 1.414zm21 21s1.414 1.414 0 2.828s-2.828 0-2.828 0l-1.414-1.414s-1.414-1.414 0-2.828s2.828 0 2.828 0l1.414 1.414zm-.413-18.172s-1.414 1.414-2.828 0s0-2.828 0-2.828l1.414-1.414s1.414-1.414 2.828 0s0 2.828 0 2.828l-1.414 1.414zm-21 21s-1.414 1.414-2.828 0s0-2.828 0-2.828l1.414-1.414s1.414-1.414 2.828 0s0 2.828 0 2.828l-1.414 1.414zM16 32s0-2 2-2s2 2 2 2v2s0 2-2 2s-2-2-2-2v-2z"/>
+                    <circle fill="#FFAC33" cx="18" cy="18" r="10"/>
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" class="ml-1.5 hidden" id="rain">
+                    <path id="secondary" d="M6,17,5,19m5-2L8,21m6-4-1,2m5-2-2,4" style="fill: none; stroke: rgb(44, 169, 188); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"/>
+                    <path id="primary" d="M21,9a4,4,0,0,1-4,4H6A3,3,0,1,1,7.08,7.21a5,5,0,0,1,9-2.09A4.08,4.08,0,0,1,17,5,4,4,0,0,1,21,9Z" style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"/>
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="#000000" width="20px" height="20px" viewBox="0 0 24 24"  class="ml-1.5 hidden" id="water">
+                    <path d="M11.421,3.707,3.707,11.421a1,1,0,0,1-1.414-1.414l7.714-7.714a1,1,0,0,1,1.414,1.414Zm7.715,1.157a1,1,0,0,0-1.414,0l-7.715,7.715a1,1,0,1,0,1.414,1.414l7.715-7.715A1,1,0,0,0,19.136,4.864Zm1.157,7.715-7.714,7.714a1,1,0,1,0,1.414,1.414l7.714-7.714a1,1,0,0,0-1.414-1.414Z"/>
+                  </svg>
+                </p>
+                <a href="{% url 'common:logout' %}" class="bg-white font-bold border border-black text-gray-900 rounded-md px-3 py-2 text-sm">{{user}}</a>
+              </div>
+            </div>
+          </div>
+        </nav>
+        <header class="bg-white border-b border-gray-600 dark:bg-gray-900 shadow">
+          {% block title %}
+          {% endblock title %}
+        </header>
+        {% block content %}
+        {% endblock content %}
+      </div>
+</body>
+<script>
+  const time_socket = new WebSocket('ws://'+ window.location.host +'/ws/time/');
+        time_socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            document.getElementById('time-display').textContent = data.time;
+        }
+
+        time_socket.onopen = () => {
+        }
+
+  const weather_socket = new WebSocket('ws://'+ window.location.host +'/ws/weather/');
+        weather_socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            var temp = data.temp;
+            var rain = data.rain;
+            if ( temp !== "" ) {
+              $('#weather-display').text(temp);
+              if ( rain == 0 ){
+                $('#sun').removeClass("hidden");
+                $('#rain').addClass("hidden");
+                $('#water').addClass("hidden");
+              } else if ( rain == 1 ){
+                $('#sun').addClass("hidden");
+                $('#rain').removeClass("hidden");
+                $('#water').addClass("hidden");
+              } else if ( rain == 5 ){
+                $('#sun').addClass("hidden");
+                $('#rain').addClass("hidden");
+                $('#water').removeClass("hidden");
+              }
+            }
+        }
+        weather_socket_socket.onopen = () => {
+        }
+</script>
+
+
+{% if user.is_authenticated %}
+{% else %}
+  <script>
+    window.location.href = '{% url "common:login" %}';
+  </script>
+{% endif %}
+
+</html>

@@ -1,0 +1,329 @@
+{% extends "../base.html" %} {% load static %} {% block content %}
+
+<main>
+  <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+    <div class="w-3/6 float-left">
+      <div class="py-2">
+        <p class="text-2xl font-bold tracking-tight text-gray-900">구성도</p>
+      </div>
+      <svg width="800" height="700">
+        <rect
+          id="pms"
+          width="100"
+          height="50"
+          fill="white"
+          x="200"
+          y="300"
+          stroke="black"
+        ></rect>
+        <rect
+          id="emsl"
+          width="100"
+          height="50"
+          fill="white"
+          x="400"
+          y="300"
+          stroke="black"
+        ></rect>
+        <rect
+          id="ems2"
+          width="100"
+          height="50"
+          fill="white"
+          x="200"
+          y="400"
+          stroke="black"
+        ></rect>
+        <rect
+          id="pv"
+          width="100"
+          height="50"
+          fill="white"
+          x="0"
+          y="200"
+          stroke="black"
+        ></rect>
+        <rect
+          id="pcs"
+          width="100"
+          height="50"
+          fill="white"
+          x="0"
+          y="300"
+          stroke="black"
+        ></rect>
+        <rect
+          id="battery"
+          width="100"
+          height="50"
+          fill="white"
+          x="0"
+          y="400"
+          stroke="black"
+        ></rect>
+
+        <polyline
+          stroke="rgb(255,0,255)"
+          stroke-width="3"
+          fill="none"
+          points="300,325 400,325"
+        >
+          <animate
+            attributeName="stroke"
+            values="rgb(255,0,255);rgb(0,255,0);rgb(255,0,255)"
+            dur="2s"
+            repeatCount="indefinite"
+          />
+        </polyline>
+        <polyline
+          stroke="rgb(255,0,255)"
+          stroke-width="3"
+          fill="none"
+          points="250,350 250,400"
+        />
+        <polyline
+          stroke="rgb(255,0,255)"
+          stroke-width="3"
+          fill="none"
+          points="200,320 150,320 150,225 100,225"
+        />
+        <polyline
+          stroke="rgb(255,0,255)"
+          stroke-width="3"
+          fill="none"
+          points="50,250 50,300"
+        />
+        <polyline
+          stroke="rgb(255,0,255)"
+          stroke-width="3"
+          fill="none"
+          points="200,325 150,325 150,325 100,325"
+        />
+        <polyline
+          stroke="rgb(255,0,255)"
+          stroke-width="3"
+          fill="none"
+          points="50,350 50,400"
+        />
+        <polyline
+          stroke="rgb(255,0,255)"
+          stroke-width="3"
+          fill="none"
+          points="200,330 150,330 150,425 100,425"
+        />
+
+        <rect width="8" height="30" x="197" y="310"></rect>
+        <circle cx="300" cy="325" r="4"></circle>
+        <circle cx="100" cy="225" r="4"></circle>
+        <circle cx="100" cy="325" r="4"></circle>
+        <circle cx="100" cy="425" r="4"></circle>
+        <circle cx="400" cy="325" r="4"></circle>
+        <circle cx="250" cy="350" r="4"></circle>
+        <circle cx="250" cy="400" r="4"></circle>
+
+        <circle cx="50" cy="250" r="4"></circle>
+        <circle cx="50" cy="300" r="4"></circle>
+        <circle cx="50" cy="350" r="4"></circle>
+        <circle cx="50" cy="400" r="4"></circle>
+
+        <text x="230" y="330">PMS</text>
+        <text x="430" y="330">EMS</text>
+        <text x="212" y="430">Local EMS</text>
+        <text x="35" y="230">PV</text>
+        <text x="32" y="330">PCS</text>
+        <text x="23" y="430">Battery</text>
+      </svg>
+    </div>
+    <div class="w-3/6 float-right">
+      <div class="py-1.5">
+        <p class="text-2xl font-bold tracking-tight text-gray-900">
+          실시간 현황
+        </p>
+      </div>
+      <div>
+        <p class="text-lg font-bold tracking-tight text-gray-900">PCS</p>
+      </div>
+      <div class="flex flex-col">
+        <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+            <div class="overflow-hidden">
+              <table class="min-w-full text-center text-xs font-light">
+                <thead class="border-b font-medium dark:border-neutral-500">
+                  <tr>
+                    <th scope="col" class="px-1 py-1">
+                      Voltage (R)
+                    </th>
+                    <th scope="col" class="px-1 py-1">
+                      Voltage (S)
+                    </th>
+                    <th scope="col" class="px-1 py-1">
+                      Voltage (T)
+                    </th>
+                    <th scope="col" class="px-1 py-1">
+                      Current (R)
+                    </th>
+                    <th scope="col" class="px-1 py-1">
+                      Current (S)
+                    </th>
+                    <th scope="col" class="px-1 py-1">
+                      Current (T)
+                    </th>
+                    <th scope="col" class="px-1 py-1">
+                      ActivePower
+                    </th>
+                    <th scope="col" class="px-1 py-1">Frequency</th>
+                    <th scope="col" class="px-1 py-1">
+                      누적전력량
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="dark:border-neutral-500" id="pcs_data">
+                    <td class="whitespace-nowrap px-1 py-2">0</td>
+                    <td class="whitespace-nowrap px-1 py-2">0</td>
+                    <td class="whitespace-nowrap px-1 py-2">0</td>
+                    <td class="whitespace-nowrap px-1 py-2">0</td>
+                    <td class="whitespace-nowrap px-1 py-2">0</td>
+                    <td class="whitespace-nowrap px-1 py-2">0</td>
+                    <td class="whitespace-nowrap px-1 py-2">0</td>
+                    <td class="whitespace-nowrap px-1 py-2">0</td>
+                    <td class="whitespace-nowrap px-1 py-2">0</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="py-1.5">
+        <p class="text-lg font-bold tracking-tight text-gray-900">Battery</p>
+      </div>
+      <div class="flex flex-col">
+        <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+            <div class="overflow-hidden">
+              <table class="min-w-full text-center text-xs font-light">
+                <thead class="border-b font-medium dark:border-neutral-500">
+                  <tr>
+                    <th scope="col" class="px-1 py-1">
+                      DC Voltage (R)
+                    </th>
+                    <th scope="col" class="px-1 py-1">
+                      DC Voltage (S)
+                    </th>
+                    <th scope="col" class="px-1 py-1">
+                      DC Voltage (T)
+                    </th>
+                    <th scope="col" class="px-1 py-1">
+                      DC Current (R)
+                    </th>
+                    <th scope="col" class="px-1 py-1">
+                      DC Current (S)
+                    </th>
+                    <th scope="col" class="px-1 py-1">
+                      DC Current (T)
+                    </th>
+                    <th scope="col" class="px-1 py-1">
+                      ActivePower
+                    </th>
+                    <th scope="col" class="px-1 py-1">SOC</th>
+                    <th scope="col" class="px-1 py-1">SOH</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="dark:border-neutral-500" id="battery_data">
+                    <td class="whitespace-nowrap px-1 py-2">0</td>
+                    <td class="whitespace-nowrap px-1 py-2">0</td>
+                    <td class="whitespace-nowrap px-1 py-2">0</td>
+                    <td class="whitespace-nowrap px-1 py-2">0</td>
+                    <td class="whitespace-nowrap px-1 py-2">0</td>
+                    <td class="whitespace-nowrap px-1 py-2">0</td>
+                    <td class="whitespace-nowrap px-1 py-2">0</td>
+                    <td class="whitespace-nowrap px-1 py-2">0</td>
+                    <td class="whitespace-nowrap px-1 py-2">0</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="py-1.5">
+        <p class="text-lg font-bold tracking-tight text-gray-900">PV</p>
+      </div>
+      <div class="flex flex-col">
+        <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+            <div class="overflow-hidden">
+              <table class="min-w-full text-center text-xs font-light">
+                <thead class="border-b font-medium dark:border-neutral-500">
+                  <tr>
+                    <th scope="col" class="px-3 py-2">
+                      ActivePower
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="dark:border-neutral-500" id="pv_data">
+                    <td class="whitespace-nowrap px-3 py-2">0</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="py-2">
+        <p class="text-lg font-bold tracking-tight text-gray-900">
+          금일 전력량 차트
+        </p>
+      </div>
+      <canvas id="myChart" class="max-h-96"></canvas>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/realtime_main.js' %}"></script>
+
+<script>
+  const tag = document.getElementById("main");
+  tag.className =
+    "bg-gray-300 dark:bg-gray-900 dark:text-white rounded-md px-3 py-2 text-sm font-medium";
+
+  var myChart;
+  function createChart(labels, data) {
+    var ctx = document.getElementById("myChart").getContext("2d");
+    var myChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: "데이터 합계",
+            data: data,
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+      },
+    });
+    return myChart;
+  }
+
+  var today = new Date();
+  var year = today.getFullYear();
+  var month = ("0" + (today.getMonth() + 1)).slice(-2);
+  var day = ("0" + today.getDate()).slice(-2);
+  var dateString = year + "-" + month + "-" + day;
+
+  $.get('{% url "ems:chart_data" %}', { date: dateString }, function (data) {
+    myChart = createChart(data.labels, data.data);
+  });
+</script>
+
+{% endblock content %}

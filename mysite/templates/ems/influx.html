@@ -1,0 +1,114 @@
+{% extends "../base.html" %} {% load static %} {% block title %}
+<div class="mx-auto max-w-7xl px-2 py-4 sm:px-6 lg:px-8 flex justify-between">
+  <h1 class="text-3xl font-bold tracking-tight dark:text-white">
+    초단위(Influx)
+  </h1>
+  <p class="flex flex-row space-x-4 justify-end order-last items-center">
+    <label class="text-center dark:text-white">Date:</label>
+    {{ form.start_date }}
+    <label class="text-center dark:text-white">to</label>
+    {{ form.end_date }} {% csrf_token %}
+    <button
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      type="button"
+      id="btn_range_search"
+    >
+      검색
+    </button>
+    <button
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      type="button"
+      id="btn_all"
+    >
+      전체
+    </button>
+  </p>
+</div>
+{% endblock title %} {% block content %}
+<main>
+  <div class="mx-auto max-w-7xl py-3 sm:px-6 lg:px-8">
+    <div id="second-table"></div>
+  </div>
+</main>
+
+<script>
+  $(function () {
+    $(".datepicker-start").datepicker({ dateFormat: "yy-mm-dd" });
+    $(".datepicker-start").datepicker("setDate", "today");
+    $(".datepicker-end").datepicker({ dateFormat: "yy-mm-dd" });
+    $(".datepicker-end").datepicker("setDate", "today");
+  });
+</script>
+
+<script>
+  const tag = document.getElementById("influx");
+  tag.className =
+    "bg-gray-300 dark:bg-gray-900 dark:text-white rounded-md px-3 py-2 text-sm font-medium";
+  $(document).ready(function () {
+    var page = "1";
+    var start = $(".datepicker-start").val();
+    var end = $(".datepicker-end").val();
+    updateTable(page, start, end);
+    function updateTable(page, start, end) {
+      $.ajax({
+        url: '{% url "ems:ajax_update_table_influx" %}',
+        type: "GET",
+        data: {
+          page: page,
+          start: start,
+          end: end,
+        },
+        success: function (data) {
+          $("#second-table").html(data.html_data);
+        },
+      });
+    }
+
+    $("#btn_range_search").click(function () {
+      var page = "1";
+      var start = $(".datepicker-start").val();
+      var end = $(".datepicker-end").val();
+      updateTable(page, start, end);
+    });
+
+    $("#btn_all").click(function () {
+      var page = "1";
+      $(".datepicker-start").datepicker("setDate", "");
+      $(".datepicker-end").datepicker("setDate", "");
+      var start = $(".datepicker-start").val();
+      var end = $(".datepicker-end").val();
+      updateTable(page, start, end);
+    });
+
+    $(document).on("click", ".page-link", function () {
+      var page = $(this).data("page");
+      var start = $(".datepicker-start").val();
+      var end = $(".datepicker-end").val();
+      updateTable(page, start, end);
+    });
+
+    $(document).on("click", "#btn_download", function () {
+      var start = $(".datepicker-start").val();
+      var end = $(".datepicker-end").val();
+      $.ajax({
+        url: '{% url "ems:export_data_sec" %}',
+        type: "GET",
+        data: {
+          start: start,
+          end: end,
+        },
+        success: function (data) {
+          var blob = new Blob([data]);
+          var link = document.createElement("a");
+          link.href = window.URL.createObjectURL(blob);
+          link.download = "data.csv";
+          link.click();
+        },
+        error: function (xhr, status, error) {
+          console.error(error);
+        },
+      });
+    });
+  });
+</script>
+{% endblock content %}
